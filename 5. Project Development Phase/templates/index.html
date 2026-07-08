@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OptiCrop - Smart Agricultural Crop Recommendation System</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Fonts (Outfit & Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #1b5e20;
+      --primary-hover: #123e16;
+      --accent-color: #4caf50;
+      --bg-gradient: linear-gradient(135deg, #f1f8e9 0%, #ffffff 100%);
+      --card-shadow: 0 10px 30px rgba(27, 94, 32, 0.05);
+      --card-shadow-hover: 0 15px 35px rgba(27, 94, 32, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f8f5;
+      color: #263238;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4, h5, .display-font {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+    }
+
+    .navbar {
+      background-color: var(--primary-color) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar-brand {
+      font-size: 1.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+      color: white;
+      border-radius: 20px;
+      padding: 3rem 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 8px 24px rgba(27, 94, 32, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-section::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .card {
+      border: none;
+      border-radius: 18px;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      background-color: #ffffff;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      box-shadow: var(--card-shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      background-color: #fdfdfd;
+      border-bottom: 1px solid #f1f1f1;
+      padding: 1.25rem 1.5rem;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(27, 94, 32, 0.2);
+    }
+
+    .btn-secondary {
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #37474f;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+      border-radius: 10px;
+      padding: 0.65rem 0.95rem;
+      border: 2px solid #e0e0e0;
+      background-color: #fafafa;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-color);
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+    }
+
+    .input-icon {
+      position: relative;
+    }
+
+    .input-icon i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-color);
+    }
+
+    .input-icon input {
+      padding-left: 36px;
+    }
+
+    .result-badge {
+      font-size: 1.15rem;
+      font-weight: 700;
+      padding: 0.5rem 1.25rem;
+      border-radius: 100px;
+      display: inline-block;
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 10px;
+    }
+
+    .progress-bar {
+      background-color: var(--accent-color);
+      border-radius: 10px;
+    }
+
+    .crop-profile-img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .advice-card {
+      border-left: 4px solid #ff9800;
+      background-color: #fffde7;
+    }
+
+    .advice-card.high {
+      border-left-color: #f44336;
+      background-color: #ffebee;
+    }
+
+    .advice-card.low {
+      border-left-color: #03a9f4;
+      background-color: #e1f5fe;
+    }
+
+    .footer {
+      background-color: #1a251b;
+      color: #b0bec5;
+      padding: 2.5rem 0;
+      margin-top: 5rem;
+    }
+
+    .radar-chart-container {
+      position: relative;
+      margin: auto;
+      height: 320px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <i class="bi bi-leaf-fill text-warning me-2"></i>
+        <span class="display-font">OptiCrop</span>
+      </a>
+      <button class="navbar-brand btn btn-link text-white text-decoration-none d-lg-none ms-auto" style="border:none;">
+        <i class="bi bi-award-fill text-warning me-1"></i> AI Engine
+      </button>
+    </div>
+  </nav>
+
+  <div class="container mb-5">
+    
+    <!-- Hero Block -->
+    <div class="hero-section text-center text-md-start">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <span class="badge bg-warning text-dark mb-2 px-3 py-2 fw-bold text-uppercase">Smart Farming Decision Support</span>
+          <h1 class="display-5 text-white mb-2">Optimal Crop Recommendation Engine</h1>
+          <p class="lead mb-0 text-white-50">Leverage state-of-the-art Machine Learning models trained on real soil diagnostics and climate matrices to maximize crop yields, sustain resource use, and guarantee food security.</p>
+        </div>
+        <div class="col-md-4 text-center d-none d-md-block">
+          <i class="bi bi-cpu text-white-50" style="font-size: 6.5rem; opacity: 0.3;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="row g-4">
+      
+      <!-- Input Parameters Column -->
+      <div class="col-lg-5 col-xl-4">
+        <div class="card h-100">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h4 class="mb-0 text-success"><i class="bi bi-sliders me-2"></i>Soil & Climate Inputs</h4>
+            <span class="badge bg-success-subtle text-success">Diagnostics</span>
+          </div>
+          <div class="card-body p-4">
+            
+            <form id="recommendation-form" novalidate>
+              
+              <!-- Nitrogen (N) -->
+              <div class="mb-3">
+                <label for="nitrogen" class="form-label d-flex justify-content-between">
+                  <span>Nitrogen (N) <small class="text-muted">(kg/ha)</small></span>
+                  <span class="text-success fw-bold">Range: 0-140</span>
+                </label>
+                <div class="input-icon">
+                  <i class="bi bi-activity"></i>
+                  <input type="number" class="form-control" id="nitrogen" name="nitrogen" placeholder="e.g. 80" min="0" max="140" required value="80">
+                </div>
+                <div class="invalid-feedback">Please enter a valid Nitrogen level (0-140).</div>
+              </div>
+
+              <!-- Phosphorus (P) -->
+              <div class="mb-3">
+                <label for="phosphorus" class="form-label d-flex justify-content-between">
+                  <span>Phosphorus (P) <small class="text-muted">(kg/ha)</small></span>
+                  <span class="text-success fw-bold">Range: 0-145</span>
+                </label>
+                <div class="input-icon">
+                  <i class="bi bi-circle-square"></i>
+                  <input type="number" class="form-control" id="phosphorus" name="phosphorus" placeholder="e.g. 40" min="0" max="145" required value="40">
+                </div>
+                <div class="invalid-feedback">Please enter a valid Phosphorus level (0-145).</div>
+              </div>
+
+              <!-- Potassium (K) -->
+              <div class="mb-3">
+                <label for="potassium" class="form-label d-flex justify-content-between">
+                  <span>Potassium (K) <small class="text-muted">(kg/ha)</small></span>
+                  <span class="text-success fw-bold">Range: 0-205</span>
+                </label>
+                <div class="input-icon">
+                  <i class="bi bi-star"></i>
+                  <input type="number" class="form-control" id="potassium" name="potassium" placeholder="e.g. 40" min="0" max="205" required value="40">
+                </div>
+                <div class="invalid-feedback">Please enter a valid Potassium level (0-205).</div>
+              </div>
+
+              <!-- Temperature -->
+              <div class="mb-3">
+                <label for="temperature" class="form-label d-flex justify-content-between">
+                  <span>Temperature <small class="text-muted">(°C)</small></span>
+                  <span class="text-success fw-bold">Range: 0-45</span>
+                </label>
+                <div class="input-icon">
+                  <i class="bi bi-thermometer-half"></i>
+                  <input type="number" class="form-control" id="temperature" name="temperature" placeholder="e.g. 25.5" min="0" max="45" step="0.1" required value="25.5">
+                </div>
+                <div class="invalid-feedback">Please enter a temperature within 0-45°C.</div>
+              </div>
+
+              <!-- Humidity -->
+              <div class="mb-3">
+                <label for="humidity" class="form-label d-flex justify-content-between">
+                  <span>Humidity <small class="text-muted">(%)</small></span>
+                  <span class="text-success fw-bold">Range: 0-100</span>
+                </label>
+                <div class="input-icon">
+                  <i class="bi bi-droplet-half"></i>
+                  <input type="number" class="form-control" id="humidity" name="humidity" placeholder="e.g. 80" min="0" max="100" required value="80">
+                </div>
+                <div class="invalid-feedback">Please enter a valid Humidity percentage (0-100).</div>
+              </div>
+
+              <!-- pH Level -->
+              <div class="mb-3">
+                <label for="ph" class="form-label d-flex justify-content-between">
+                  <span>pH Level</span>
+                  <span class="text-success fw-bold">Range: 0-14</span>
+                </label>
+                <div class="input-icon">
+                  <i class="bi bi-bezier2"></i>
+                  <input type="number" class="form-control" id="ph" name="ph" placeholder="e.g. 6.5" min="0" max="14" step="0.1" required value="6.5">
+                </div>
+                <div class="invalid-feedback">Please enter a valid pH level (0-14).</div>
+              </div>
+
+              <!-- Rainfall -->
+              <div class="mb-4">
+                <label for="rainfall" class="form-label d-flex justify-content-between">
+                  <span>Rainfall <small class="text-muted">(mm)</small></span>
+                  <span class="text-success fw-bold">Range: 0-300</span>
+                </label>
+                <div class="input-icon">
+                  <i class="bi bi-cloud-rain-heavy"></i>
+                  <input type="number" class="form-control" id="rainfall" name="rainfall" placeholder="e.g. 175" min="0" max="300" step="0.1" required value="175">
+                </div>
+                <div class="invalid-feedback">Please enter rainfall value (0-300 mm).</div>
+              </div>
+
+              <!-- Submit/Reset Actions -->
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center" id="btn-submit">
+                  <i class="bi bi-cpu-fill me-2" id="submit-icon"></i>
+                  <span id="submit-text">Run Recommendation Engine</span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="btn-clear">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i> Clear inputs
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Column -->
+      <div class="col-lg-7 col-xl-8">
+        <div class="card h-100 d-flex flex-column" id="results-card">
+          <div class="card-header bg-success-subtle py-3 text-success d-flex align-items-center justify-content-between">
+            <h4 class="mb-0"><i class="bi bi-bar-chart-steps me-2"></i>Analysis & Prediction Metrics</h4>
+            <span class="badge bg-success" id="result-status">Ready</span>
+          </div>
+
+          <!-- Empty State (No Prediction Yet) -->
+          <div class="card-body d-flex flex-column align-items-center justify-content-center text-center p-5 flex-grow-1" id="empty-state">
+            <i class="bi bi-clipboard-pulse text-success opacity-25" style="font-size: 8rem;"></i>
+            <h3 class="mt-4 text-secondary font-weight-bold">Awaiting Soil Diagnostics Data</h3>
+            <p class="text-muted max-width-500">Provide the soil nutrient details and climate factors in the sidebar form, then run the engine to calculate crop suitability matrices and recommendations.</p>
+          </div>
+
+          <!-- Active Prediction Results State -->
+          <div class="card-body p-4 d-none" id="results-content">
+            <div class="row g-4">
+              
+              <!-- Left Panel: Main Crop and Description -->
+              <div class="col-md-6 d-flex flex-column justify-content-between">
+                <div>
+                  <h6 class="text-uppercase text-secondary fw-bold tracking-widest text-xs mb-1">Recommended Primary Crop</h6>
+                  <h2 class="text-success display-font mb-2 display-6" id="primary-crop-label">—</h2>
+                  
+                  <div class="mb-3">
+                    <span id="suitability-badge" class="result-badge bg-success text-white">Excellent Match</span>
+                  </div>
+                  
+                  <p class="text-muted" id="crop-description-text">—</p>
+                </div>
+                
+                <div class="mt-3">
+                  <img src="/static/images/default.svg" id="crop-display-image" class="crop-profile-img shadow-sm" alt="Crop Display Image">
+                </div>
+              </div>
+
+              <!-- Right Panel: Visual Match Stats -->
+              <div class="col-md-6">
+                <!-- Suitability Radar Chart -->
+                <h6 class="text-uppercase text-secondary fw-bold text-xs mb-2">Ideal vs Input Calibration</h6>
+                <div class="radar-chart-container mb-4">
+                  <canvas id="radarChart"></canvas>
+                </div>
+                
+                <!-- Alternatives Confidence Scores -->
+                <h6 class="text-uppercase text-secondary fw-bold text-xs mb-3">Recommendation Confidence Grid</h6>
+                <div id="confidence-bars-container">
+                  <!-- Generated bars will render here -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Advice Section (Parameter Adjustments) -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <hr class="my-4">
+                <h4 class="mb-3 text-success font-weight-bold"><i class="bi bi-info-circle-fill me-2"></i>Agronomic Optimization Advice</h4>
+                
+                <div id="advice-alerts-container">
+                  <!-- System generated advice alerts -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer mt-auto">
+    <div class="container text-center">
+      <h5 class="text-white display-font mb-3"><i class="bi bi-leaf text-warning me-2"></i>OptiCrop Agricultural Framework</h5>
+      <p class="mb-2">A Machine Learning decision support platform for farmers, policymakers, and agronomists.</p>
+      <p class="text-white-50 mb-0"><small>&copy; 2026 OptiCrop Enterprise. Built with Flask, scikit-learn, Bootstrap 5 and Chart.js.</small></p>
+    </div>
+  </footer>
+
+  <!-- ChartJS and Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const form = document.getElementById('recommendation-form');
+    const emptyState = document.getElementById('empty-state');
+    const resultsContent = document.getElementById('results-content');
+    const primaryCropLabel = document.getElementById('primary-crop-label');
+    const suitabilityBadge = document.getElementById('suitability-badge');
+    const cropDescriptionText = document.getElementById('crop-description-text');
+    const cropDisplayImage = document.getElementById('crop-display-image');
+    const confidenceBarsContainer = document.getElementById('confidence-bars-container');
+    const adviceAlertsContainer = document.getElementById('advice-alerts-container');
+    const submitBtn = document.getElementById('btn-submit');
+    const submitText = document.getElementById('submit-text');
+    const submitIcon = document.getElementById('submit-icon');
+    const resultStatus = document.getElementById('result-status');
+
+    let radarChart = null;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Perform Bootstrap validation
+      if (!form.checkValidity()) {
+        e.stopPropagation();
+        form.classList.add('was-validated');
+        return;
+      }
+
+      form.classList.remove('was-validated');
+      
+      // Disable inputs and show loading state
+      submitBtn.disabled = true;
+      submitText.textContent = "Analyzing Parameters...";
+      submitIcon.className = "bi bi-arrow-repeat spin spinner-border spinner-border-sm me-2";
+      resultStatus.textContent = "Processing";
+
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        if (data.error) {
+          alert(`Error: ${data.error}`);
+          resetLoadingState();
+          return;
+        }
+
+        // 1. Display Core Crop Info
+        primaryCropLabel.textContent = data.label;
+        cropDescriptionText.textContent = data.description;
+        cropDisplayImage.src = data.image + "?t=" + new Date().getTime(); // Prevent image caching
+        
+        // 2. Suitability Badge Styling
+        suitabilityBadge.textContent = data.match_status.replace('_', ' ').toUpperCase();
+        suitabilityBadge.className = `result-badge bg-${data.match_color}`;
+        
+        // 3. Render Radar Chart
+        renderRadarChart(data.radar_labels, data.radar_user, data.radar_ideal);
+
+        // 4. Render Confidence Bars
+        renderConfidenceBars(data.top3);
+
+        // 5. Render Optimization Advice
+        renderAdvice(data.param_advice);
+
+        // Toggle visibility
+        emptyState.classList.add('d-none');
+        resultsContent.classList.remove('d-none');
+        resultStatus.textContent = "Recommendation Ready";
+
+      } catch (err) {
+        console.error(err);
+        alert("Failed to communicate with recommendation engine. Please ensure backend is running.");
+      } finally {
+        resetLoadingState();
+      }
+    });
+
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      form.reset();
+      form.classList.remove('was-validated');
+      emptyState.classList.remove('d-none');
+      resultsContent.classList.add('d-none');
+      resultStatus.textContent = "Ready";
+      if (radarChart) {
+        radarChart.destroy();
+        radarChart = null;
+      }
+    });
+
+    function resetLoadingState() {
+      submitBtn.disabled = false;
+      submitText.textContent = "Run Recommendation Engine";
+      submitIcon.className = "bi bi-cpu-fill me-2";
+    }
+
+    function renderRadarChart(labels, userData, idealData) {
+      if (radarChart) {
+        radarChart.destroy();
+      }
+
+      // Translate labels to display format
+      const formattedLabels = labels.map(l => {
+        if (l === 'N') return 'Nitrogen';
+        if (l === 'P') return 'Phosphorus';
+        if (l === 'K') return 'Potassium';
+        return l.charAt(0).toUpperCase() + l.slice(1);
+      });
+
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: formattedLabels,
+          datasets: [
+            {
+              label: 'Your Field Inputs',
+              data: userData,
+              fill: true,
+              backgroundColor: 'rgba(244, 67, 54, 0.2)',
+              borderColor: 'rgba(244, 67, 54, 0.8)',
+              pointBackgroundColor: 'rgba(244, 67, 54, 1)',
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: 'rgba(244, 67, 54, 1)'
+            },
+            {
+              label: 'Crop Ideal Parameters',
+              data: idealData,
+              fill: true,
+              backgroundColor: 'rgba(27, 94, 32, 0.2)',
+              borderColor: 'rgba(27, 94, 32, 0.8)',
+              pointBackgroundColor: 'rgba(27, 94, 32, 1)',
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: 'rgba(27, 94, 32, 1)'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: {
+                display: true
+              },
+              suggestedMin: 0,
+              suggestedMax: 100
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: {
+                  family: 'Inter'
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderConfidenceBars(top3) {
+      confidenceBarsContainer.innerHTML = '';
+      top3.forEach(item => {
+        const barDiv = document.createElement('div');
+        barDiv.className = 'mb-3';
+        barDiv.innerHTML = `
+          <div class="d-flex justify-content-between mb-1">
+            <span class="fw-semibold text-secondary">${item.label}</span>
+            <span class="text-success fw-bold">${item.confidence}%</span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: ${item.confidence}%" aria-valuenow="${item.confidence}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        `;
+        confidenceBarsContainer.appendChild(barDiv);
+      });
+    }
+
+    function renderAdvice(adviceList) {
+      adviceAlertsContainer.innerHTML = '';
+      if (!adviceList || adviceList.length === 0) {
+        adviceAlertsContainer.innerHTML = `
+          <div class="alert alert-success d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+            <div>
+              <strong>Perfect soil diagnostics!</strong> All parameters align tightly with the ideal requirements of the recommended crop. No immediate modifications are necessary.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      adviceList.forEach(item => {
+        const cardClass = item.status === 'high' ? 'high' : 'low';
+        const icon = item.status === 'high' ? 'bi-arrow-up-circle-fill text-danger' : 'bi-arrow-down-circle-fill text-info';
+        const badgeColor = item.status === 'high' ? 'danger' : 'info';
+        
+        let displayParam = item.param;
+        if (item.param === 'N') displayParam = 'Nitrogen';
+        if (item.param === 'P') displayParam = 'Phosphorus';
+        if (item.param === 'K') displayParam = 'Potassium';
+        
+        const card = document.createElement('div');
+        card.className = `advice-card ${cardClass} p-3 mb-2 rounded shadow-sm d-flex align-items-start`;
+        card.innerHTML = `
+          <div class="me-3 fs-3">
+            <i class="bi ${icon}"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center mb-1">
+              <span class="fw-bold me-2 text-dark">${displayParam.toUpperCase()} Deviation</span>
+              <span class="badge bg-${badgeColor} text-uppercase text-xs">${item.status}</span>
+            </div>
+            <p class="mb-0 text-secondary">${item.msg}</p>
+          </div>
+        `;
+        adviceAlertsContainer.appendChild(card);
+      });
+    }
+  </script>
+
+</body>
+</html>
