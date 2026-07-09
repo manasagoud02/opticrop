@@ -1,1 +1,0 @@
-"""OptiCrop backend package."""
