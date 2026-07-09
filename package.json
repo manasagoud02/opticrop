@@ -1,0 +1,12 @@
+{
+  "name": "opti-crop-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OPTI-CROP Enterprise Root Workspace Launcher",
+  "scripts": {
+    "dev": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "preview": "npm run preview --prefix frontend",
+    "install:frontend": "npm install --prefix frontend"
+  }
+}
